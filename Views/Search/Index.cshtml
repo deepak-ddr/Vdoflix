@@ -1,0 +1,36 @@
+@model dynamic
+@{
+    ViewData["Title"] = "Search";
+    var results = Model?.results as IEnumerable<dynamic>;
+}
+<div class="container py-4">
+    <h2>Search results for "@Context.Request.Query["q"]"</h2>
+    <div class="row row-cols-2 row-cols-md-6 g-3 mt-2">
+        @if (results != null)
+        {
+            foreach (var r in results)
+            {
+                var title = r.title ?? r.name;
+                var poster = r.poster_path != null ? ($"https://image.tmdb.org/t/p/w300{r.poster_path}") : null;
+                var id = r.id;
+                <div class="col">
+                    @{
+                        var media = r.media_type as string;
+                        var controller = media == "tv" ? "Tv" : "Movies";
+                    }
+                    <a asp-controller="@controller" asp-action="Details" asp-route-id="@id" class="text-decoration-none">
+                        <div class="card poster">
+                            @if (poster != null)
+                            {
+                                <img src="@poster" class="card-img-top" alt="@title" loading="lazy" />
+                            }
+                            <div class="poster-overlay">
+                                <div class="poster-title">@title</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+    </div>
+</div>

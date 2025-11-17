@@ -1,0 +1,17 @@
+@model dynamic
+@{
+    var title = Model?.title ?? Model?.name ?? "Details";
+    var backdrop = Model?.backdrop_path != null ? ($"https://image.tmdb.org/t/p/w1280{Model.backdrop_path}") : null;
+    var poster = Model?.poster_path != null ? ($"https://image.tmdb.org/t/p/w500{Model.poster_path}") : null;
+    ViewData["Title"] = title;
+}
+<div class="hero" style="background-image:url('@backdrop')">
+    <div class="hero-overlay"></div>
+    <div class="hero-content container">
+        <h1 class="hero-title">@title</h1>
+        <p class="hero-desc">@Model?.overview</p>
+        <div class="hero-actions">
+            <a class="btn btn-light btn-lg me-2" asp-controller="Watch" asp-action="Index" asp-route-id="@Model.id" asp-route-title="@title" asp-route-poster="@poster"><span class="bi bi-play-fill"></span> Play</a>
+        </div>
+    </div>
+</div>

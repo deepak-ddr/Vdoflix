@@ -1,0 +1,60 @@
+@model Vdoflix.Web.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="hero" style="background-image:url('@(Model?.Featured?.BackdropUrl ?? "")')">
+    <div class="hero-overlay"></div>
+    <div class="hero-content container">
+        <h1 class="hero-title">@Model?.Featured?.Title</h1>
+        <p class="hero-desc">@Model?.Featured?.Description</p>
+        <div class="hero-actions">
+            <a class="btn btn-light btn-lg me-2"><span class="bi bi-play-fill"></span> Play</a>
+            <a class="btn btn-outline-light btn-lg">More Info</a>
+        </div>
+    </div>
+</div>
+
+<div class="container sections">
+    @if (Model?.ContinueWatching?.Any() == true)
+    {
+        <div class="section">
+            <h2 class="section-title">Continue Watching</h2>
+            <div class="row-scroll">
+                @foreach (var w in Model.ContinueWatching)
+                {
+                    var pct = w.DurationSeconds > 0 ? Math.Round(100 * w.PositionSeconds / w.DurationSeconds) : 0;
+                    <a class="card poster text-decoration-none" asp-controller="Watch" asp-action="Index" asp-route-id="@w.MovieId" asp-route-title="@w.Title" asp-route-poster="@w.PosterUrl">
+                        @if (!string.IsNullOrEmpty(w.PosterUrl))
+                        {
+                            <img src="@w.PosterUrl" alt="@w.Title" loading="lazy" />
+                        }
+                        <div class="poster-overlay">
+                            <div class="poster-title">@w.Title</div>
+                            <div class="poster-meta">@pct% watched</div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    @foreach (var sec in Model?.Sections ?? new())
+    {
+        <div class="section">
+            <h2 class="section-title">@sec.Title</h2>
+            <div class="row-scroll">
+                @foreach (var item in sec.Items)
+                {
+                    <div class="card poster">
+                        <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" />
+                        <div class="poster-overlay">
+                            <div class="poster-title">@item.Title</div>
+                            <div class="poster-meta">⭐ @item.Rating</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

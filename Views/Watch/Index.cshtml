@@ -1,0 +1,44 @@
+@{
+    var id = (string)ViewData["Id"]!;
+    var title = (string?)ViewData["Title"] ?? "Watch";
+    var poster = (string?)ViewData["Poster"];
+    ViewData["Title"] = title;
+}
+<div class="container py-4">
+    <div class="ratio ratio-16x9 bg-black">
+        <video id="player" controls poster="@poster">
+            <source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-720p.mp4" type="video/mp4" />
+        </video>
+    </div>
+</div>
+@section Scripts {
+<script>
+(function(){
+  const video = document.getElementById('player');
+  const movieId = '@id';
+  const title = '@title'.toString();
+  const poster = '@poster';
+  let lastSent = 0;
+  function send(){
+    if (video.duration) {
+      fetch('/Watch/Progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          movieId: movieId,
+          title: title,
+          posterUrl: poster,
+          positionSeconds: video.currentTime,
+          durationSeconds: video.duration
+        })
+      });
+    }
+  }
+  video.addEventListener('timeupdate', () => {
+    const now = Date.now();
+    if (now - lastSent > 5000) { lastSent = now; send(); }
+  });
+  window.addEventListener('beforeunload', send);
+})();
+</script>
+}

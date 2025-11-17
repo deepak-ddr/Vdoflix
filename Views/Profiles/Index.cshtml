@@ -1,0 +1,31 @@
+@model IEnumerable<Vdoflix.Web.Models.Profile>
+@{
+    ViewData["Title"] = "Profiles";
+    var current = (int?)ViewBag.CurrentProfileId;
+}
+<div class="container py-4">
+    <h1 class="mb-3">Who's watching?</h1>
+    <div class="row row-cols-2 row-cols-md-5 g-3">
+        @foreach (var p in Model)
+        {
+            <div class="col text-center">
+                <form asp-action="Select" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@p.Id" />
+                    <button class="btn btn-outline-light w-100 py-4" type="submit">
+                        <div class="display-6">@p.Name.Substring(0, Math.Min(2, p.Name.Length)).ToUpper()</div>
+                        <div>@p.Name</div>
+                        @if (current == p.Id) { <div class="badge bg-success">Current</div> }
+                    </button>
+                </form>
+            </div>
+        }
+        <div class="col">
+            <form asp-action="Create" method="post" class="d-flex gap-2">
+                @Html.AntiForgeryToken()
+                <input class="form-control" name="name" placeholder="Add profile name" />
+                <button class="btn btn-primary" type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+</div>
